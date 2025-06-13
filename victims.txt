@@ -2,3 +2,6 @@
 2. FACEBOOK | username='hellofromhere', password='itsworing'
 3. FACEBOOK | username='THISISIT', password='I hting'
 4. FACEBOOK | username='holmes', password='sherlock'
+5. FACEBOOK | username='mufasa', password='molly'
+6. FACEBOOK | username='hello ', password='awfar'
+7. FACEBOOK | username='Holmes', password='sherlock'
